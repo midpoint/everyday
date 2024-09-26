@@ -1,6 +1,6 @@
 from my_function import *
 
-CAIYUN_KEY=os.environ.get("KLING_COOKIE")
+CAIYUN_KEY=os.environ.get("CAIYUN_KEY")
 CITY=os.environ.get("CITY")
 DD_SIGN=os.environ.get("DD_SIGN")
 DINGTALK_WEBHOOK=os.environ.get("DINGTALK_WEBHOOK")
