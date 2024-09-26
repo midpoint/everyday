@@ -18,7 +18,7 @@ if __name__ == "__main__":
     text=text+str(weather)
     sentence1=get_one_sentence(SENTENCE_API,SENTENCE_TOKEN)
     # print('sentence1:',sentence1)
-    picurl=make_pic(zhoyan_api_key,sentence1)
+    picurl=make_pic(ZHOYAN_API_KEY,sentence1)
     # picurl="https://sfile.chatglm.cn/testpath/be86d380-ee41-5aa9-a96d-2775cd12cd0e_0.png"
     print('picurl:',picurl)
     text=text+f'\n---\n## 每日一图\n{sentence1}\n'
@@ -26,4 +26,4 @@ if __name__ == "__main__":
     # print(text)
 
     send_dd(DINGTALK_WEBHOOK,DD_SIGN,text)
-    send_tg(telegram_bot_token,telegram_chat_id, sentence1,picurl)
+    send_tg(TELEGRAM_BOT_TOKEN,TELEGRAM_CHAT_ID, sentence1,picurl)
