@@ -75,7 +75,6 @@ def get_weather(caiyun_key,location):
         return "无法获取天气信息"
 
 def send_tg(telegram_bot_token,telegram_chat_id, caption,message):
-    apihelper.proxy = {'https':'socks5://127.0.0.1:12334'}
     bot = telebot.TeleBot(telegram_bot_token)
     bot.send_message(chat_id=telegram_chat_id, text=caption)
     bot.send_photo(chat_id=telegram_chat_id, photo=message)
