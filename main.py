@@ -21,7 +21,7 @@ if __name__ == "__main__":
     picurl=make_pic(ZHOYAN_API_KEY,sentence1)
     # picurl="https://sfile.chatglm.cn/testpath/be86d380-ee41-5aa9-a96d-2775cd12cd0e_0.png"
     print('picurl:',picurl)
-    text=text+f'\n---\n## 每日一图\n{sentence1}\n'
+    text=text+f'\n---\n## 一诗一图\n{sentence1}\n'
     text=text+f'![{sentence1}]({picurl})'   #!['+sentence1+']('+picurl+')'
     # print(text)
 
