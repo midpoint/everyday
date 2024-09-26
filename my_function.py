@@ -26,6 +26,7 @@ def get_one_sentence(SENTENCE_API,SENTENCE_Token):
     except:
         print("get SENTENCE_API wrong")
         return DEFAULT_SENTENCE
+        
 def make_pic(zhoyan_api_key,sentence):
     from zhipuai import ZhipuAI
     client = ZhipuAI(api_key=zhoyan_api_key)
@@ -64,12 +65,13 @@ def get_weather(caiyun_key,city,location):
         'HEAVY_HAZE': '重度雾霾'
     }
     url = f"https://api.caiyunapp.com/v2.6/{caiyun_key}/{location}/weather"
-    response = requests.get(url)
-    data = response.json()
-    if data['status'] == "ok":
-        weather_info = data['result']['realtime']
-        return f"- 天气：{weather_status[weather_info['skycon']]}\n- 温度：{weather_info['temperature']}℃\n- 体感温度：{weather_info['apparent_temperature']}℃\n- 风力：{weather_info['wind']['speed']}\n- 湿度：{weather_info['humidity']}\n- 能见度：{weather_info['visibility']}\n"
-    else:
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data['status'] == "ok":
+            weather_info = data['result']['realtime']
+            return f"- 天气：{weather_status[weather_info['skycon']]}\n- 温度：{weather_info['temperature']}℃\n- 体感温度：{weather_info['apparent_temperature']}℃\n- 风力：{weather_info['wind']['speed']}\n- 湿度：{weather_info['humidity']}\n- 能见度：{weather_info['visibility']}\n"
+    except:
         return "无法获取天气信息"
 
 def send_tg(telegram_bot_token,telegram_chat_id, caption,message):
