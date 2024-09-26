@@ -3,6 +3,7 @@
 name: Manual workflow
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '30 20 * * *'
 
