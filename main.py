@@ -26,4 +26,4 @@ if __name__ == "__main__":
     # print(text)
 
     send_dd(DINGTALK_WEBHOOK,DD_SIGN,text)
-    send_tg(TELEGRAM_BOT_TOKEN,TELEGRAM_CHAT_ID, sentence1,picurl)
+    send_tg(TELEGRAM_BOT_TOKEN,TELEGRAM_CHAT_ID, text)
