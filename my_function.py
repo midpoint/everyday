@@ -40,7 +40,7 @@ def send_dd(dingtalk_webhook,Dd_sign, message):
     dingtalk_bot = DingtalkChatbot(dingtalk_webhook,Dd_sign)
     dingtalk_bot.send_markdown(title='每日早报', text=message)
 
-def get_weather(caiyun_key,city,location):
+def get_weather(caiyun_key,location):
     # weather_status = {"PARTLY_CLOUDY_DAY":"多云（白天）","PARTLY_CLOUDY_NIGHT":"多云（夜间）","CLOUDY":"阴","LIGHT_HAZE":"轻度雾霾","MODERATE_HAZE":"中度雾霾","HEAVY_HAZE":"重度雾霾","LIGHT_RAIN":"小雨","MODERATE_RAIN":"中雨","HEAVY_RAIN":"大雨","STORM_RAIN":"暴雨","FOG":"雾",}
     weather_status = {
         'CLEAR_DAY': '晴天',
