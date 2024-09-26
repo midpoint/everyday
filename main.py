@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # picurl="https://sfile.chatglm.cn/testpath/be86d380-ee41-5aa9-a96d-2775cd12cd0e_0.png"
     print('picurl:',picurl)
     text=text+f'\n---\n## 一诗一图\n{sentence1}\n'
-    text=text+f'![{sentence1}]({picurl})'   #!['+sentence1+']('+picurl+')'
+    text=text+f'![]({picurl})'   #!['+sentence1+']('+picurl+')'
     # print(text)
 
     send_dd(DINGTALK_WEBHOOK,DD_SIGN,text)
