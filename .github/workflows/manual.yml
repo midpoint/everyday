@@ -4,6 +4,10 @@ name: Manual workflow
 
 on:
   workflow_dispatch:
+    inputs:
+        message:
+          description: "weather message"
+          required: false
   schedule:
     - cron: '30 6 * * *'
 
