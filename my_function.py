@@ -74,8 +74,8 @@ def get_weather(caiyun_key,location):
     except:
         return "无法获取天气信息"
 
-def send_tg(telegram_bot_token,telegram_chat_id, caption,message):
+def send_tg(telegram_bot_token,telegram_chat_id, message):
     bot = telebot.TeleBot(telegram_bot_token)
-    bot.send_message(chat_id=telegram_chat_id, text=caption)
-    bot.send_photo(chat_id=telegram_chat_id, photo=message)
+    bot.send_message(chat_id=telegram_chat_id, text=message)
+    
     
