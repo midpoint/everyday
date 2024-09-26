@@ -8,16 +8,16 @@ on:
     - cron: '0 7 * * *'
 
 env:
-  SENTENCE_API：${{ secrets.SENTENCE_API }}
-  SENTENCE_TOKEN：${{ secrets.SENTENCE_TOKEN }}
-  ZHOYAN_API_KEY： ${{ secrets.ZHOYAN_API_KEY }}
-  TELEGRAM_BOT_TOKEN： ${{ secrets.TELEGRAM_BOT_TOKEN }}
-  TELEGRAM_CHAT_ID： ${{ secrets.TELEGRAM_CHAT_ID }}
-  DINGTALK_WEBHOOK： ${{ secrets.DINGTALK_WEBHOOK }}
-  DD_SIGN： ${{ secrets.DD_SIGN }}
-  CAIYUN_KEY： ${{ secrets.CAIYUN_KEY }}
-  LOCATION： ${{ secrets.LOCATION }}
-  CITY： ${{ secrets.CITY }}
+  SENTENCE_API: ${{ secrets.SENTENCE_API }}
+  SENTENCE_TOKEN: ${{ secrets.SENTENCE_TOKEN }}
+  ZHOYAN_API_KEY: ${{ secrets.ZHOYAN_API_KEY }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+  DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+  DD_SIGN: ${{ secrets.DD_SIGN }}
+  CAIYUN_KEY: ${{ secrets.CAIYUN_KEY }}
+  LOCATION: ${{ secrets.LOCATION }}
+  CITY: ${{ secrets.CITY }}
 
 jobs:
   sync:
