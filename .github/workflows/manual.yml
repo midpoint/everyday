@@ -1,0 +1,53 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "weather message"
+        required: false
+  # schedule:
+    # - cron: '0 7 * * *'
+
+env:
+  SENTENCE_API： ${{ secrets.SENTENCE_API }}
+  SENTENCE_TOKEN： ${{ secrets.SENTENCE_TOKEN }}
+  ZHOYAN_API_KEY： ${{ secrets.ZHOYAN_API_KEY }}
+  TELEGRAM_BOT_TOKEN： ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID： ${{ secrets.TELEGRAM_CHAT_ID  }}
+  SENTENCE_API： ${{ secrets.SENTENCE_API }}
+  DINGTALK_WEBHOOK： ${{ secrets.DINGTALK_WEBHOOK  }}
+  DD_SIGN： ${{ secrets.DD_SIGN }}
+  CAIYUN_KEY： ${{ secrets.CAIYUN_KEY }}
+  LOCATION： ${{ secrets.LOCATION  }}
+  CITY： ${{ secrets.CITY }}
+
+jobs:
+  sync:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: install python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip" # caching pip dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: manual
+        run: |
+          python main.py
+
+      - name: Push New NewPaper
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "generated today dairy" || echo "no need to commit "
+          git push || echo "no file change"
