@@ -1,5 +1,16 @@
 from my_function import *
 
+CAIYUN_KEY=os.environ.get("KLING_COOKIE")
+CITY=os.environ.get("CITY")
+DD_SIGN=os.environ.get("DD_SIGN")
+DINGTALK_WEBHOOK=os.environ.get("DINGTALK_WEBHOOK")
+LOCATION=os.environ.get("LOCATION")
+SENTENCE_API=os.environ.get("SENTENCE_API")
+SENTENCE_TOKEN=os.environ.get("SENTENCE_TOKEN")
+TELEGRAM_BOT_TOKEN=os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID=os.environ.get("TELEGRAM_CHAT_ID")
+ZHOYAN_API_KEY=os.environ.get("ZHOYAN_API_KEY")
+
 if __name__ == "__main__":
     weather = get_weather(caiyun_key,city,location)
     print(weather)
