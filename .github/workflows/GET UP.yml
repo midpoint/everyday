@@ -10,9 +10,9 @@ env:
   SENTENCE_TOKEN： ${{ secrets.SENTENCE_TOKEN }}
   ZHOYAN_API_KEY： ${{ secrets.ZHOYAN_API_KEY }}
   TELEGRAM_BOT_TOKEN： ${{ secrets.TELEGRAM_BOT_TOKEN }}
-  TELEGRAM_CHAT_ID ： ${{ secrets.TELEGRAM_CHAT_ID  }}
+  TELEGRAM_CHAT_ID： ${{ secrets.TELEGRAM_CHAT_ID  }}
   SENTENCE_API： ${{ secrets.SENTENCE_API }}
-  DINGTALK_WEBHOOK : ${{ secrets.DINGTALK_WEBHOOK  }}
+  DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK  }}
   DD_SIGN: ${{ secrets.DD_SIGN }}
   CAIYUN_KEY: ${{ secrets.CAIYUN_KEY }}
   LOCATION : ${{ secrets.LOCATION  }}
