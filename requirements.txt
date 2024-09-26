@@ -6,4 +6,4 @@ openai
 pyTelegramBotAPI
 telegramify-markdown
 dingtalkchatbot
-pillow
+Pillow
