@@ -8,3 +8,4 @@ telegramify-markdown
 dingtalkchatbot
 Pillow
 matplotlib
+zhipuai
