@@ -1,0 +1,50 @@
+name: GET UP
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "weather message"
+        required: false
+
+env:
+  SENTENCE_API： ${{ secrets.SENTENCE_API }}
+  SENTENCE_Token： ${{ secrets.SENTENCE_Token }}
+  zhoyan_api_key： ${{ secrets.zhoyan_api_key }}
+  telegram_bot_token： ${{ secrets.telegram_bot_token }}
+  telegram_chat_id ： ${{ secrets.telegram_chat_id  }}
+  SENTENCE_API： ${{ secrets.SENTENCE_API }}
+  dingtalk_webhook : ${{ secrets.dingtalk_webhook  }}
+  Dd_sign: ${{ secrets.Dd_sign }}
+  caiyun_key: ${{ secrets.caiyun_key }}
+  location : ${{ secrets.location  }}
+  city: ${{ secrets.city }}
+
+jobs:
+  sync:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: install python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip" # caching pip dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: GET UP
+        run: |
+          python get_up.py ${{ secrets.G_T }} ${{ github.repository }}  --weather_message ": ${{ github.event.inputs.message }}" --tele_token ${{ secrets.TG_TOKEN }} --tele_chat_id ${{ secrets.TG_CHAT_ID }}
+
+      - name: Push New Pic
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add OUT_DIR/* knowledge.txt questions.txt
+          git commit -m "generated today pic" || echo "no need to commit "
+          git push || echo "no file change"
