@@ -5,7 +5,7 @@ name: Manual workflow
 on:
   workflow_dispatch:
   schedule:
-    - cron: '30 20 * * *'
+    - cron: '30 6 * * *'
 
 env:
   SENTENCE_API: ${{ secrets.SENTENCE_API }}
