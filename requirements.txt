@@ -7,3 +7,4 @@ pyTelegramBotAPI
 telegramify-markdown
 dingtalkchatbot
 Pillow
+matplotlib
