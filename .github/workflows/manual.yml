@@ -9,7 +9,7 @@ on:
           description: "weather message"
           required: false
   schedule:
-    - cron: '30 6 * * *'
+    - cron: '30 22 * * *'
 
 env:
   SENTENCE_API: ${{ secrets.SENTENCE_API }}
