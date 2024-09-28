@@ -41,39 +41,108 @@ def send_dd(dingtalk_webhook,Dd_sign, message):
     dingtalk_bot.send_markdown(title='每日早报', text=message)
 
 def get_weather(caiyun_key,location):
-    # weather_status = {"PARTLY_CLOUDY_DAY":"多云（白天）","PARTLY_CLOUDY_NIGHT":"多云（夜间）","CLOUDY":"阴","LIGHT_HAZE":"轻度雾霾","MODERATE_HAZE":"中度雾霾","HEAVY_HAZE":"重度雾霾","LIGHT_RAIN":"小雨","MODERATE_RAIN":"中雨","HEAVY_RAIN":"大雨","STORM_RAIN":"暴雨","FOG":"雾",}
-    weather_status = {
-        'CLEAR_DAY': '晴天',
-        'CLEAR_NIGHT': '晴夜',
-        'PARTLY_CLOUDY_DAY': '多云',
-        'PARTLY_CLOUDY_NIGHT': '多云',
-        'CLOUDY': '阴',
-        'LIGHT_RAIN': '小雨',
-        'MODERATE_RAIN': '中雨',
-        'HEAVY_RAIN': '大雨',
-        'STORM_RAIN': '暴雨',
-        'FOG': '雾',
-        'LIGHT_SNOW': '小雪',
-        'MODERATE_SNOW': '中雪',
-        'HEAVY_SNOW': '大雪',
-        'STORM_SNOW': '暴雪',
-        'DUST': '浮尘',
-        'SAND': '沙尘',
-        'WIND': '大风',
-        'LIGHT_HAZE': '轻度雾霾',
-        'MODERATE_HAZE': '中度雾霾',
-        'HEAVY_HAZE': '重度雾霾'
-    }
     url = f"https://api.caiyunapp.com/v2.6/{caiyun_key}/{location}/weather"
+    def get_wind_force_level(wind_speed):
+        if wind_speed < 0.3:
+            return "0级 无风"
+        elif wind_speed < 1.5:
+            return "1级 微风徐徐"
+        elif wind_speed < 3.3:
+            return "2级 清风"
+        elif wind_speed < 5.4:
+            return "3级 和风，树叶摇摆"
+        elif wind_speed < 7.9:
+            return "4级 树枝摇动"
+        elif wind_speed < 10.7:
+            return "5级 风力强劲"
+        elif wind_speed < 13.8:
+            return "6级 风力较强"
+        elif wind_speed < 17.1:
+            return "7级 风力超强"
+        elif wind_speed < 20.7:
+            return "8级 狂风大作"
+        elif wind_speed < 24.4:
+            return "9级 狂风呼啸"
+        elif wind_speed < 28.4:
+            return "10级 暴风毁树"
+        elif wind_speed < 32.6:
+            return "11级 暴风毁树"
+        elif wind_speed < 36.9:
+            return "12级 飓风"
+        elif wind_speed < 41.4:
+            return "13级 台风"
+        elif wind_speed < 46.1:
+            return "14级 强台风"
+        elif wind_speed < 50.9:
+            return "15级 强台风"
+        elif wind_speed < 56:
+            return "16级 超强台风"
+        elif wind_speed < 61.2:
+            return "17级 超强台风"
+        else:
+            return "17+级  超超强台风"
+    
+    def get_direction(angle):
+        if angle < 0 or angle >= 360:
+            return "无效的角度值"
+        elif angle < 22.5 or angle >= 337.5:
+            return "北"
+        elif angle < 67.5:
+            return "东北"
+        elif angle < 112.5:
+            return "东"
+        elif angle < 157.5:
+            return "东南"
+        elif angle < 202.5:
+            return "南"
+        elif angle < 247.5:
+            return "西南"
+        elif angle < 292.5:
+            return "西"
+        else:
+            return "西北"
+    
+    weather_status = {
+            'CLEAR_DAY': '晴天',
+            'CLEAR_NIGHT': '晴夜',
+            'PARTLY_CLOUDY_DAY': '多云',
+            'PARTLY_CLOUDY_NIGHT': '多云',
+            'CLOUDY': '阴',
+            'LIGHT_RAIN': '小雨',
+            'MODERATE_RAIN': '中雨',
+            'HEAVY_RAIN': '大雨',
+            'STORM_RAIN': '暴雨',
+            'FOG': '雾',
+            'LIGHT_SNOW': '小雪',
+            'MODERATE_SNOW': '中雪',
+            'HEAVY_SNOW': '大雪',
+            'STORM_SNOW': '暴雪',
+            'DUST': '浮尘',
+            'SAND': '沙尘',
+            'WIND': '大风',
+            'LIGHT_HAZE': '轻度雾霾',
+            'MODERATE_HAZE': '中度雾霾',
+            'HEAVY_HAZE': '重度雾霾'
+        }
+    
     try:
         response = requests.get(url)
         data = response.json()
         if data['status'] == "ok":
-            weather_info = data['result']['realtime']
-            return f"- 天气：{weather_status[weather_info['skycon']]}\n- 温度：{weather_info['temperature']}℃\n- 体感温度：{weather_info['apparent_temperature']}℃\n- 风力：{weather_info['wind']['speed']}\n- 湿度：{weather_info['humidity']}\n- 能见度：{weather_info['visibility']}\n"
-    except:
-        return "无法获取天气信息"
-
+            weather_info_now = data['result']['realtime']
+            weather_info_day = data['result']['daily']
+            wind_level=get_wind_force_level(weather_info_now['wind']['speed'])
+            wind_direction=get_direction(weather_info_now['wind']['direction'])
+            text=f"- 天气：{weather_status[weather_info_now['skycon']]} 【{data['result']['forecast_keypoint']}】\n"
+            text=text+f"- 温度：{weather_info_now['temperature']}℃  【{weather_info_day['temperature'][0]['max']}℃/{weather_info_day['temperature'][0]['min']}℃】\n"
+            text=text+f"- 风力：{wind_level}  风向：{wind_direction}\n"
+            text=text+f"- 湿度：{weather_info_now['humidity']*100}%  能见度：{weather_info_now['visibility']}\n"
+            text=text+f"- 空气质量：AQI:{weather_info_day['air_quality']['aqi'][0]['avg']['chn']}  PM2.5：{weather_info_day['air_quality']['pm25'][0]['avg']} \n"
+            # text=text+f"
+            return text
+    except Exception as e:
+        return f"无法获取天气信息:\n {e}"
+        
 def send_tg(telegram_bot_token,telegram_chat_id, message):
     bot = telebot.TeleBot(telegram_bot_token)
     bot.send_message(chat_id=telegram_chat_id, text=message)
