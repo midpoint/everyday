@@ -138,7 +138,7 @@ def get_weather(caiyun_key,location):
             text=text+f"- 风力：{wind_level}  风向：{wind_direction}\n"
             text=text+f"- 湿度：{weather_info_now['humidity']*100}%  能见度：{weather_info_now['visibility']}\n"
             text=text+f"- 空气质量：AQI:{weather_info_day['air_quality']['aqi'][0]['avg']['chn']}  PM2.5：{weather_info_day['air_quality']['pm25'][0]['avg']} \n"
-            text=text+f"- 生活指数：紫外线:{weather_info_day['life_index']['ultraviolet'][0]['desc']}  洗车：{weather_info_day['life_index']['carWashing'][0]['desc']} \n"
+            text=text+f"- 生活指数：紫外线：{weather_info_day['life_index']['ultraviolet'][0]['desc']}  洗车：{weather_info_day['life_index']['carWashing'][0]['desc']} \n"
             return text
     except Exception as e:
         return f"无法获取天气信息:\n {e}"
