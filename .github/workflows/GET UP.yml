@@ -1,29 +1,29 @@
-name: GET UP
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
 
 on:
+  workflow_dispatch:
+    inputs:
+        message:
+          description: "weather message"
+          required: false
   schedule:
-    - cron: '0 7 * * *'
-
-env:
-  SENTENCE_API： ${{ secrets.SENTENCE_API }}
-  SENTENCE_TOKEN： ${{ secrets.SENTENCE_TOKEN }}
-  ZHOYAN_API_KEY： ${{ secrets.ZHOYAN_API_KEY }}
-  TELEGRAM_BOT_TOKEN： ${{ secrets.TELEGRAM_BOT_TOKEN }}
-  TELEGRAM_CHAT_ID： ${{ secrets.TELEGRAM_CHAT_ID  }}
-  SENTENCE_API： ${{ secrets.SENTENCE_API }}
-  DINGTALK_WEBHOOK： ${{ secrets.DINGTALK_WEBHOOK  }}
-  DD_SIGN： ${{ secrets.DD_SIGN }}
-  CAIYUN_KEY： ${{ secrets.CAIYUN_KEY }}
-  LOCATION： ${{ secrets.LOCATION  }}
-  CITY： ${{ secrets.CITY }}
+    - cron: '30 22 * * *'
 
 jobs:
   sync:
     name: Build
     runs-on: ubuntu-latest
+    env:
+          TZ: Asia/Shanghai    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: set TimeZone
+        uses: szenius/set-timezone@v1.0 # 设置执行环境的时区
+        with:
+          timezoneLinux: "Asia/Shanghai"  
 
       - name: install python 3.10
         uses: actions/setup-python@v5
@@ -34,7 +34,18 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: GET UP
+      - name: manual
+        env:
+          SENTENCE_API: ${{ secrets.SENTENCE_API }}
+          SENTENCE_TOKEN: ${{ secrets.SENTENCE_TOKEN }}
+          ZHOYAN_API_KEY: ${{ secrets.ZHOYAN_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DD_SIGN: ${{ secrets.DD_SIGN }}
+          CAIYUN_KEY: ${{ secrets.CAIYUN_KEY }}
+          LOCATION: ${{ secrets.LOCATION }}
+          CITY: ${{ secrets.CITY }}      
         run: |
           python main.py
 
