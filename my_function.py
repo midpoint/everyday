@@ -30,10 +30,13 @@ def get_one_sentence(SENTENCE_API,SENTENCE_Token):
 def make_pic(zhoyan_api_key,sentence):
     from zhipuai import ZhipuAI
     client = ZhipuAI(api_key=zhoyan_api_key)
-    response = client.images.generations(
+    try:
+        response = client.images.generations(
         model ="cogview-3",#填写需要调用的模型名称
         prompt=sentence)
-    return response.data[0].url
+        return response.data[0].url
+    except Exception as e:
+        return e
 
 def send_dd(dingtalk_webhook,Dd_sign, message):
     # telegram_bot.send_photo(chat_id=telegram_chat_id, photo=image_url)
