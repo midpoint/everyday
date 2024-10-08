@@ -9,7 +9,10 @@ import telebot
 from telebot import apihelper
 from dingtalkchatbot.chatbot import DingtalkChatbot
 
-
+def get_day():
+    today = pendulum.today(tz='Asia/Shanghai')
+    return today.format('YYYY月MM月DD日 dddd',locale='zh')
+    
 def get_one_sentence(SENTENCE_API,SENTENCE_Token):
     DEFAULT_SENTENCE = (
     "赏花归去马如飞\r\n去马如飞酒力微\r\n酒力微醒时已暮\r\n醒时已暮赏花归\r\n"
