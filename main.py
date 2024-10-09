@@ -14,7 +14,7 @@ ZHOYAN_API_KEY=os.environ.get("ZHOYAN_API_KEY")
 if __name__ == "__main__":
     weather = get_weather(CAIYUN_KEY,LOCATION)
     # print(weather)
-    text=f'# 每日早报\n- {get_day()}\n---\n## 今日天气[{city}]\n'
+    text=f'# 每日早报\n- {get_day()}\n---\n## 今日天气[{CITY}]\n'
     text=text+str(weather)
     sentence1=get_one_sentence(SENTENCE_API,SENTENCE_TOKEN)
     # print('sentence1:',sentence1)
