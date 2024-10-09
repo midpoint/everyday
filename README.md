@@ -18,10 +18,10 @@
 变量名|含义|举例
 ------|------|------
 CAIYUN_KEY|彩云天气API key|***
-CITY|城市名（显示用）|广州
+CITY|城市名（显示天气用）|广州
+LOCATION|经度纬度（定位天气）|"113.466487,22.627804"
 DD_SIGN|钉钉签名|SEC*
 DINGTALK_WEBHOOK|钉钉对话webhook|https://oapi.dingtalk.com/robot/send?access_token=*
-LOCATION|经度纬度|"113.466487,22.627804"
 SENTENCE_API|获取古诗词|https://v2.jinrishici.com/one.json
 SENTENCE_TOKEN|古诗词api的token|* 可省略
 TELEGRAM_BOT_TOKEN|tg机器人的token|*
