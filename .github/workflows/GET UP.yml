@@ -4,10 +4,10 @@ name: Get Up
 
 on:
   workflow_dispatch:
-  #   inputs:
-  #       message:
-  #         description: "weather message"
-  #         required: false
+    inputs:
+        message:
+          description: "weather message"
+          required: false
   schedule:
     - cron: '30 22 * * *'
 
