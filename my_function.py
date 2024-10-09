@@ -15,7 +15,7 @@ def get_day():
     today = datetime.datetime.now()
     cntoday = cnlunar.Lunar(datetime.datetime.now(), godType='8char')  # 常规算法
     text=f'{today.year}年{today.month}月{today.day}日 {cntoday.weekDayCn} \n'
-    text=text+f'- 农历：{cntoday.year8Char}【{cntoday.chineseYearZodiac}】年{cntoday.lunarMonthCn}月{cntoday.lunarDayCn}日\n'
+    text=text+f'- 农历：{cntoday.year8Char}【{cntoday.chineseYearZodiac}】年 {cntoday.lunarMonthCn}月{cntoday.lunarDayCn}日\n'
     text=text+f'- 今日节气：{cntoday.todaySolarTerms} / 下一节气：{cntoday.nextSolarTerm}  {cntoday.nextSolarTermYear}{cntoday.nextSolarTermDate} \n'
     return text
     
