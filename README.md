@@ -1,7 +1,7 @@
 # 每日早报
 ## 运行例图
 
-![每日早报](https://i.imgur.com/Sgd8flY.jpeg)
+![每日早报](https://i.imgur.com/NLSpdkK.jpeg)
 
 ## 功能说明
 - 自动生成指定位置的天气情况
