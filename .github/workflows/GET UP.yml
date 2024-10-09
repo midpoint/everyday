@@ -3,11 +3,11 @@
 name: Get Up
 
 on:
-  workflow_dispatch:
-    inputs:
-        message:
-          description: "weather message"
-          required: false
+  # workflow_dispatch:
+  #   inputs:
+  #       message:
+  #         description: "weather message"
+  #         required: false
   schedule:
     - cron: '30 22 * * *'
 
