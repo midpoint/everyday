@@ -8,10 +8,14 @@ import matplotlib.pyplot as plt
 import telebot
 from telebot import apihelper
 from dingtalkchatbot.chatbot import DingtalkChatbot
+import datetime
+import cnlunar
 
 def get_day():
-    today = pendulum.today(tz='Asia/Shanghai')
-    return today.format('YYYY月MM月DD日 dddd',locale='zh')
+   today = datetime.datetime.now()
+   cntoday = cnlunar.Lunar(datetime.datetime.now(), godType='8char')  # 常规算法
+   return f'{today.year}年{today.month}月{today.day}日 {cntoday.weekDayCn} \n- 农历：{cntoday.year8Char}【{cntoday.chineseYearZodiac}】年{cntoday.lunarMonthCn}月{cntoday.lunarDayCn}日'
+
     
 def get_one_sentence(SENTENCE_API,SENTENCE_Token):
     DEFAULT_SENTENCE = (
