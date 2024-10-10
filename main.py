@@ -10,6 +10,10 @@ SENTENCE_TOKEN=os.environ.get("SENTENCE_TOKEN")
 TELEGRAM_BOT_TOKEN=os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID=os.environ.get("TELEGRAM_CHAT_ID")
 ZHOYAN_API_KEY=os.environ.get("ZHOYAN_API_KEY")
+G_T = os.environ.get("G_T")
+REPO_NAME = os.environ.get("REPO_NAME")
+ISSUE_NUMBER = os.environ.get("ISSUE_NUMBER")
+
 
 if __name__ == "__main__":
     weather = get_weather(CAIYUN_KEY,LOCATION)
@@ -24,6 +28,7 @@ if __name__ == "__main__":
     text=text+f'\n---\n## 一诗一图\n{sentence1}\n'
     text=text+f'![]({picurl})'   #!['+sentence1+']('+picurl+')'
     # print(text)
+    create_comment(G_T,REPO_NAME,ISSUE_NUMBER,text)
 
     send_dd(DINGTALK_WEBHOOK,DD_SIGN,text)
     send_tg(TELEGRAM_BOT_TOKEN,TELEGRAM_CHAT_ID, text)
