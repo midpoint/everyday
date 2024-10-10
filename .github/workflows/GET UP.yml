@@ -20,11 +20,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: set TimeZone
-        uses: szenius/set-timezone@v1.0 # 设置执行环境的时区
-        with:
-          timezoneLinux: "Asia/Shanghai"  
-
+        
       - name: install python 3.10
         uses: actions/setup-python@v5
         with:
@@ -34,7 +30,7 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: manual
+      - name: GET UP
         env:
           SENTENCE_API: ${{ secrets.SENTENCE_API }}
           SENTENCE_TOKEN: ${{ secrets.SENTENCE_TOKEN }}
@@ -52,9 +48,9 @@ jobs:
         run: |
           python main.py
 
-      - name: Push New NewPaper
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git commit -m "generated today dairy" || echo "no need to commit "
-          git push || echo "no file change"
+      # - name: Push New NewPaper
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git commit -m "generated today dairy" || echo "no need to commit "
+      #     git push || echo "no file change"
