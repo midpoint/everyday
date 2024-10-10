@@ -10,6 +10,13 @@ from telebot import apihelper
 from dingtalkchatbot.chatbot import DingtalkChatbot
 import datetime
 import cnlunar
+from github import Github
+
+def create_comment(Github_token,repo_name,issue_number,text):
+    g = Github(Github_token)
+    repo = g.get_repo(repo_name)
+    issue = repo.get_issue(issue_number)
+    issue.create_comment(text)
 
 def get_day():
     today = datetime.datetime.now()
