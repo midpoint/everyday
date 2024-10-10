@@ -15,7 +15,7 @@ from github import Github
 def create_comment(Github_token,repo_name,issue_number,text):
     g = Github(Github_token)
     repo = g.get_repo(repo_name)
-    issue = repo.get_issue(issue_number)
+    issue = repo.get_issue(int(issue_number))
     issue.create_comment(text)
 
 def get_day():
