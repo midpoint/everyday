@@ -27,3 +27,6 @@ SENTENCE_TOKEN|古诗词api的token|* 可省略
 TELEGRAM_BOT_TOKEN|tg机器人的token|*
 TELEGRAM_CHAT_ID|tg对话ID|*
 ZHOYAN_API_KEY|智谱清言的API|*
+G_T|Github Token|*
+REPO_NAME|项目名|midpoint/everyday
+ISSUE_NUMBER|问题编号|1
