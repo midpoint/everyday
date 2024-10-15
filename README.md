@@ -1,9 +1,8 @@
 # 每日早报
 ## 运行例图
 
-![每日早报](https://i.imgur.com/BMQGcFS.jpeg)
+![每日早报](https://i.imgur.com/lcUpkEC.jpeg)
 
-![每日早报](https://i.imgur.com/iJuruBV.jpeg)
 
 ## 功能说明
 - 显示当天日期信息（包括农历）
