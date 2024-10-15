@@ -23,7 +23,7 @@ if __name__ == "__main__":
     sentence1=get_one_sentence(SENTENCE_API,SENTENCE_TOKEN)
     
     picurl=make_pic(ZHOYAN_API_KEY,sentence1)
-    text=text+f'\n---\n## 一诗一图\n{sentence1}\n'
+    text=text+f'\n---\n## 一诗一图\n- {sentence1}\n'
     text=text+f'![sentence1]({picurl})'   #!['+sentence1+']('+picurl+')'
 
     text=text+f'\n---\n## 热点新闻 \n{World_60S()}'
