@@ -12,6 +12,22 @@ import datetime
 import cnlunar
 from github import Github
 
+
+def World_60S():
+    url='https://60s.viki.moe'
+    txt=''
+    r=requests.get(url)
+    if r.ok:
+        formatted_json = json.loads(r.text)
+        # 将格式化的字符串分割成行，并返回一个列表
+        for item in formatted_json["data"]:
+            txt=txt+'- '+item+f" \n"
+
+        return txt
+    else:
+        return "60s.viki.moe is not working" 
+       
+
 def create_comment(Github_token,repo_name,issue_number,text):
     g = Github(Github_token)
     repo = g.get_repo(repo_name)
