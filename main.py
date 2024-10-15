@@ -18,7 +18,7 @@ ISSUE_NUMBER = os.environ.get("ISSUE_NUMBER")
 if __name__ == "__main__":
     weather = get_weather(CAIYUN_KEY,LOCATION)
     
-    text=f'# 每日早报\n---\n- {get_day()}\n---\n## 今日天气[{CITY}]\n'
+    text=f'# 每日早报\n---\n- {get_day()}\n---\n## 今日天气\n'
     text=text+str(weather)
     sentence1=get_one_sentence(SENTENCE_API,SENTENCE_TOKEN)
     
