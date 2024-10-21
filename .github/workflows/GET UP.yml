@@ -42,7 +42,7 @@ jobs:
           CAIYUN_KEY: ${{ secrets.CAIYUN_KEY }}
           LOCATION: ${{ secrets.LOCATION }}
           CITY: ${{ secrets.CITY }}      
-          G_T: ${{ secrets.GITHUB_TOKEN }}  #${{ secrets.G_T }}
+          G_T: ${{ secrets.G_T }}
           REPO_NAME: ${{ secrets.REPO_NAME }}
           ISSUE_NUMBER: ${{ secrets.ISSUE_NUMBER }}
         run: |
