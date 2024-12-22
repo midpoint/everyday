@@ -9,7 +9,7 @@ on:
     #       description: "weather message"
     #       required: false
   schedule:
-    - cron: '30 22 * * *'
+    - cron: '00 22 * * *'
 
 jobs:
   sync:
