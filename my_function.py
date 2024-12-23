@@ -171,7 +171,7 @@ def get_weather(caiyun_key,location):
             text=f"- 天气：{weather_status[weather_info_now['skycon']]} 【{data['result']['forecast_keypoint']}】\n"
             text=text+f"- 温度：{weather_info_now['temperature']}℃  【{weather_info_day['temperature'][0]['max']}℃/{weather_info_day['temperature'][0]['min']}℃】\n"
             text=text+f"- 风力：{wind_level} / 风向：{wind_direction}\n"
-            text=text+f"- 湿度：{weather_info_now['humidity']*100}%:.2f  / 能见度：{weather_info_now['visibility']}\n"
+            text=text+f"- 湿度：{weather_info_now['humidity']*100:.2f}%  / 能见度：{weather_info_now['visibility']}\n"
             text=text+f"- 空气：AQI：{weather_info_day['air_quality']['aqi'][0]['avg']['chn']} / PM2.5：{weather_info_day['air_quality']['pm25'][0]['avg']} \n"
             text=text+f"- 生活：紫外线{weather_info_day['life_index']['ultraviolet'][0]['desc']} / 洗车{weather_info_day['life_index']['carWashing'][0]['desc']} \n"
             return text
