@@ -64,7 +64,7 @@ def make_pic(zhoyan_api_key,sentence):
     client = ZhipuAI(api_key=zhoyan_api_key)
     try:
         response = client.images.generations(
-        model ="cogview-3",#填写需要调用的模型名称
+        model ="cogview-4",#填写需要调用的模型名称
         prompt=sentence)
         return response.data[0].url
     except Exception as e:
