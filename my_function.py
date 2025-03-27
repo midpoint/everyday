@@ -14,18 +14,17 @@ from github import Github
 
 
 def World_60S():
-    url='https://60s.viki.moe'
+    url='https://60s-api.viki.moe/v2/60s'
     txt=''
     r=requests.get(url)
     if r.ok:
         formatted_json = json.loads(r.text)
-        # 将格式化的字符串分割成行，并返回一个列表
-        for item in formatted_json["data"]:
-            txt=txt+'- '+item+f" \n"
-
+        data = formatted_json.get("data", {})
+        news_list = data.get("news", [])
+        txt += "热点新闻：\n" + "\n".join([f"- {news}" for news in news_list]) + "\n"
         return txt
     else:
-        return "60s.viki.moe is not working" 
+        return "https://60s-api.viki.moe/v2/60s is not working" 
        
 
 def create_comment(Github_token,repo_name,issue_number,text):
