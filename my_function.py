@@ -21,7 +21,7 @@ def World_60S():
         formatted_json = json.loads(r.text)
         data = formatted_json.get("data", {})
         news_list = data.get("news", [])
-        txt += "热点新闻：\n" + "\n".join([f"- {news}" for news in news_list]) + "\n"
+        txt += "\n".join([f"- {news}" for news in news_list]) + "\n"
         return txt
     else:
         return "https://60s-api.viki.moe/v2/60s is not working" 
