@@ -13,7 +13,8 @@ import cnlunar
 from github import Github
 
 def get_inspirational_quote():
-    url = "https://open.iciba.com/dsapi/?date=2025-03-27"
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    url = f"https://open.iciba.com/dsapi/?date={current_date}"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
