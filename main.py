@@ -27,6 +27,8 @@ if __name__ == "__main__":
     text=text+f'![sentence1]({picurl})'   #!['+sentence1+']('+picurl+')'
 
     text=text+f'\n---\n## 热点新闻 \n{World_60S()}'
+
+    text=text+f'\n---\n## 励志语 \n{get_inspirational_quote()}'
     
     create_comment(G_T,REPO_NAME,ISSUE_NUMBER,text)
 
