@@ -12,6 +12,14 @@ import datetime
 import cnlunar
 from github import Github
 
+def get_inspirational_quote():
+    url = "https://open.iciba.com/dsapi/?date=2025-03-27"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        return data.get("content")+"\n"+data.get("note")
+    else:
+        return "无法获取数据，状态码:"+ response.status_code
 
 def World_60S():
     url='https://60s-api.viki.moe/v2/60s'
