@@ -9,12 +9,12 @@ import telebot
 from telebot import apihelper
 from dingtalkchatbot.chatbot import DingtalkChatbot
 import datetime
-from datetime import datetime
+# from datetime import datetime
 import cnlunar
 from github import Github
 
 def get_inspirational_quote():
-    current_date = datetime.now().strftime("%Y-%m-%d")
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d")
     url = f"https://open.iciba.com/dsapi/?date={current_date}"
     response = requests.get(url)
     if response.status_code == 200:
