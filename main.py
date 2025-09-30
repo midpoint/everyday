@@ -24,7 +24,7 @@ if __name__ == "__main__":
     
     picurl=make_pic(ZHOYAN_API_KEY,sentence1)
     text=text+f'\n---\n## 一诗一图\n- {sentence1}\n'
-    text=text+f'![sentence1]({picurl})'   #!['+sentence1+']('+picurl+')'
+    # text=text+f'![sentence1]({picurl})'   #!['+sentence1+']('+picurl+')'
 
     text=text+f'\n---\n## 热点新闻 \n{World_60S()}'
 
@@ -34,3 +34,4 @@ if __name__ == "__main__":
 
     send_dd(DINGTALK_WEBHOOK,DD_SIGN,text)
     send_tg(TELEGRAM_BOT_TOKEN,TELEGRAM_CHAT_ID, text)
+
