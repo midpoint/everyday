@@ -1,0 +1,19 @@
+name: 保持仓库活跃
+on:
+  schedule:
+    - cron: '0 0 1 */2 *'  # 每2个月运行1次
+  workflow_dispatch:       # 允许手动运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 更新时间戳
+        run: |
+          echo "Last active: $(date)" > .active
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .active
+          git commit -m "Keep alive: $(date)" || exit 0
+          git push
