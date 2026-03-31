@@ -4,6 +4,9 @@ on:
     - cron: '0 0 1 */2 *'  # 每2个月运行1次
   workflow_dispatch:       # 允许手动运行
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
