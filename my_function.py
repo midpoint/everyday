@@ -1,194 +1,237 @@
-import os
-from io import BytesIO
-import requests
-import json
-import pendulum
-from PIL import Image
-import matplotlib.pyplot as plt
-import telebot
-from telebot import apihelper
-from dingtalkchatbot.chatbot import DingtalkChatbot
-import datetime
-# from datetime import datetime
-import cnlunar
-from github import Github
+from __future__ import annotations
 
-def get_inspirational_quote():
+import datetime
+import json
+from typing import Optional
+
+import cnlunar
+import requests
+from PIL import Image
+from PIL.Image import Image as PILImage
+from github import Github
+from telebot import TeleBot
+from dingtalkchatbot.chatbot import DingtalkChatbot
+
+
+# ============ 常量映射表 ============
+
+WIND_FORCE_TABLE: list[tuple[float, str]] = [
+    (0.3, "0级 无风"),
+    (1.5, "1级 微风徐徐"),
+    (3.3, "2级 清风"),
+    (5.4, "3级 和风，树叶摇摆"),
+    (7.9, "4级 树枝摇动"),
+    (10.7, "5级 风力强劲"),
+    (13.8, "6级 风力较强"),
+    (17.1, "7级 风力超强"),
+    (20.7, "8级 狂风大作"),
+    (24.4, "9级 狂风呼啸"),
+    (28.4, "10级 暴风毁树"),
+    (32.6, "11级 暴风毁树"),
+    (36.9, "12级 飓风"),
+    (41.4, "13级 台风"),
+    (46.1, "14级 强台风"),
+    (50.9, "15级 强台风"),
+    (56.0, "16级 超强台风"),
+    (61.2, "17级 超强台风"),
+    (float("inf"), "17+级 超超强台风"),
+]
+
+DIRECTION_TABLE: list[tuple[float, float, str]] = [
+    (0.0, 22.5, "北"),
+    (22.5, 67.5, "东北"),
+    (67.5, 112.5, "东"),
+    (112.5, 157.5, "东南"),
+    (157.5, 202.5, "南"),
+    (202.5, 247.5, "西南"),
+    (247.5, 292.5, "西"),
+    (292.5, 337.5, "西北"),
+]
+
+WEATHER_STATUS: dict[str, str] = {
+    "CLEAR_DAY": "晴天",
+    "CLEAR_NIGHT": "晴夜",
+    "PARTLY_CLOUDY_DAY": "多云",
+    "PARTLY_CLOUDY_NIGHT": "多云",
+    "CLOUDY": "阴",
+    "LIGHT_RAIN": "小雨",
+    "MODERATE_RAIN": "中雨",
+    "HEAVY_RAIN": "大雨",
+    "STORM_RAIN": "暴雨",
+    "FOG": "雾",
+    "LIGHT_SNOW": "小雪",
+    "MODERATE_SNOW": "中雪",
+    "HEAVY_SNOW": "大雪",
+    "STORM_SNOW": "暴雪",
+    "DUST": "浮尘",
+    "SAND": "沙尘",
+    "WIND": "大风",
+    "LIGHT_HAZE": "轻度雾霾",
+    "MODERATE_HAZE": "中度雾霾",
+    "HEAVY_HAZE": "重度雾霾",
+}
+
+DEFAULT_SENTENCE: str = (
+    "赏花归去马如飞\r\n去马如飞酒力微\r\n酒力微醒时已暮\r\n醒时已暮赏花归\r\n"
+)
+
+
+# ============ 工具函数 ============
+
+def _get_wind_force_level(wind_speed: float) -> str:
+    for threshold, label in WIND_FORCE_TABLE:
+        if wind_speed < threshold:
+            return label
+    return "17+级 超超强台风"
+
+
+def _get_direction(angle: float) -> str:
+    if angle < 0 or angle >= 360:
+        return "无效的角度值"
+    for start, end, label in DIRECTION_TABLE:
+        if start <= angle < end or (end == 337.5 and angle >= 337.5):
+            return label
+    return "北"
+
+
+# ============ 主要功能函数 ============
+
+def get_inspirational_quote() -> str:
+    """获取每日励志语"""
     current_date = datetime.datetime.now().strftime("%Y-%m-%d")
     url = f"https://open.iciba.com/dsapi/?date={current_date}"
-    response = requests.get(url)
-    if response.status_code == 200:
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
         data = response.json()
-        return data.get("content")+"\n"+data.get("note")
-    else:
-        return "无法获取数据，状态码:"+ response.status_code
+        return f"{data.get('content')}\n{data.get('note')}"
+    except requests.RequestException as e:
+        return f"无法获取励志语: {e}"
 
-def World_60S():
-    url='https://60s-api.viki.moe/v2/60s'
-    txt=''
-    r=requests.get(url)
-    if r.ok:
+
+def World_60S() -> str:
+    """获取60秒新闻简报"""
+    url = "https://60s-api.viki.moe/v2/60s"
+    try:
+        r = requests.get(url, timeout=10)
+        r.raise_for_status()
         formatted_json = json.loads(r.text)
         data = formatted_json.get("data", {})
         news_list = data.get("news", [])
-        txt += "\n".join([f"- {news}" for news in news_list]) + "\n"
-        return txt
-    else:
-        return "https://60s-api.viki.moe/v2/60s is not working" 
-       
+        if not news_list:
+            return "今日无新闻数据"
+        return "\n".join([f"- {news}" for news in news_list]) + "\n"
+    except requests.RequestException as e:
+        return f"无法获取新闻 ({url}): {e}"
 
-def create_comment(Github_token,repo_name,issue_number,text):
-    g = Github(Github_token)
+
+def create_comment(
+    github_token: str,
+    repo_name: str,
+    issue_number: int | str,
+    text: str,
+) -> None:
+    """在 GitHub Issue 下创建评论"""
+    g = Github(github_token)
     repo = g.get_repo(repo_name)
     issue = repo.get_issue(int(issue_number))
     issue.create_comment(text)
 
-def get_day():
+
+def get_day() -> str:
+    """获取今日日期信息（包含农历和节气）"""
     today = datetime.datetime.now()
-    cntoday = cnlunar.Lunar(datetime.datetime.now(), godType='8char')  # 常规算法
-    text=f'{today.year}年{today.month}月{today.day}日 {cntoday.weekDayCn} \n'
-    text=text+f'- 农历：{cntoday.year8Char}【{cntoday.chineseYearZodiac}】年 {cntoday.lunarMonthCn}{cntoday.lunarDayCn}日\n'
-    text=text+f'- 今日节气：{cntoday.todaySolarTerms} / 下一节气：{cntoday.nextSolarTerm}  {cntoday.nextSolarTermYear}{cntoday.nextSolarTermDate} \n'
-    return text
-    
-def get_one_sentence(SENTENCE_API,SENTENCE_Token):
-    DEFAULT_SENTENCE = (
-    "赏花归去马如飞\r\n去马如飞酒力微\r\n酒力微醒时已暮\r\n醒时已暮赏花归\r\n"
-)
-    headers = {
-    "X-User-Token": SENTENCE_Token
-    }
+    cntoday = cnlunar.Lunar(today, godType="8char")
+    lines = [
+        f"{today.year}年{today.month}月{today.day}日 {cntoday.weekDayCn}",
+        f"- 农历：{cntoday.year8Char}【{cntoday.chineseYearZodiac}】年 "
+        f"{cntoday.lunarMonthCn}{cntoday.lunarDayCn}日",
+        f"- 今日节气：{cntoday.todaySolarTerms} / "
+        f"下一节气：{cntoday.nextSolarTerm}  "
+        f"{cntoday.nextSolarTermYear}{cntoday.nextSolarTermDate}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def get_one_sentence(
+    sentence_api: str,
+    sentence_token: Optional[str] = None,
+) -> str:
+    """获取一句古诗词"""
+    headers = {}
+    if sentence_token:
+        headers["X-User-Token"] = sentence_token
     try:
-        r = requests.get(SENTENCE_API,headers=headers)
-        if r.ok:
-            return r.json()["data"]["content"]
-        else:
-            return DEFAULT_SENTENCE
-    except:
-        print("get SENTENCE_API wrong")
+        r = requests.get(sentence_api, headers=headers, timeout=10)
+        r.raise_for_status()
+        return r.json()["data"]["content"]
+    except (requests.RequestException, KeyError, json.JSONDecodeError) as e:
         return DEFAULT_SENTENCE
-        
-def make_pic(zhoyan_api_key,sentence):
+
+
+def make_pic(zhoyan_api_key: str, sentence: str) -> str:
+    """根据古诗词生成图片，返回图片URL或错误信息"""
     from zhipuai import ZhipuAI
+
     client = ZhipuAI(api_key=zhoyan_api_key)
     try:
         response = client.images.generations(
-        model ="cogview-4",#填写需要调用的模型名称
-        prompt=sentence)
+            model="cogview-4",
+            prompt=sentence,
+        )
         return response.data[0].url
     except Exception as e:
-        return e
+        return f"无法生成图片: {e}"
 
-def send_dd(dingtalk_webhook,Dd_sign, message):
-    # telegram_bot.send_photo(chat_id=telegram_chat_id, photo=image_url)
-    dingtalk_bot = DingtalkChatbot(dingtalk_webhook,Dd_sign)
-    dingtalk_bot.send_markdown(title='每日早报', text=message)
 
-def get_weather(caiyun_key,location):
+def send_dd(dingtalk_webhook: str, dd_sign: str, message: str) -> None:
+    """发送到钉钉"""
+    dingtalk_bot = DingtalkChatbot(dingtalk_webhook, dd_sign)
+    dingtalk_bot.send_markdown(title="每日早报", text=message)
+
+
+def get_weather(caiyun_key: str, location: str) -> str:
+    """获取天气信息"""
     url = f"https://api.caiyunapp.com/v2.6/{caiyun_key}/{location}/weather"
-    def get_wind_force_level(wind_speed):
-        if wind_speed < 0.3:
-            return "0级 无风"
-        elif wind_speed < 1.5:
-            return "1级 微风徐徐"
-        elif wind_speed < 3.3:
-            return "2级 清风"
-        elif wind_speed < 5.4:
-            return "3级 和风，树叶摇摆"
-        elif wind_speed < 7.9:
-            return "4级 树枝摇动"
-        elif wind_speed < 10.7:
-            return "5级 风力强劲"
-        elif wind_speed < 13.8:
-            return "6级 风力较强"
-        elif wind_speed < 17.1:
-            return "7级 风力超强"
-        elif wind_speed < 20.7:
-            return "8级 狂风大作"
-        elif wind_speed < 24.4:
-            return "9级 狂风呼啸"
-        elif wind_speed < 28.4:
-            return "10级 暴风毁树"
-        elif wind_speed < 32.6:
-            return "11级 暴风毁树"
-        elif wind_speed < 36.9:
-            return "12级 飓风"
-        elif wind_speed < 41.4:
-            return "13级 台风"
-        elif wind_speed < 46.1:
-            return "14级 强台风"
-        elif wind_speed < 50.9:
-            return "15级 强台风"
-        elif wind_speed < 56:
-            return "16级 超强台风"
-        elif wind_speed < 61.2:
-            return "17级 超强台风"
-        else:
-            return "17+级  超超强台风"
-    
-    def get_direction(angle):
-        if angle < 0 or angle >= 360:
-            return "无效的角度值"
-        elif angle < 22.5 or angle >= 337.5:
-            return "北"
-        elif angle < 67.5:
-            return "东北"
-        elif angle < 112.5:
-            return "东"
-        elif angle < 157.5:
-            return "东南"
-        elif angle < 202.5:
-            return "南"
-        elif angle < 247.5:
-            return "西南"
-        elif angle < 292.5:
-            return "西"
-        else:
-            return "西北"
-    
-    weather_status = {
-            'CLEAR_DAY': '晴天',
-            'CLEAR_NIGHT': '晴夜',
-            'PARTLY_CLOUDY_DAY': '多云',
-            'PARTLY_CLOUDY_NIGHT': '多云',
-            'CLOUDY': '阴',
-            'LIGHT_RAIN': '小雨',
-            'MODERATE_RAIN': '中雨',
-            'HEAVY_RAIN': '大雨',
-            'STORM_RAIN': '暴雨',
-            'FOG': '雾',
-            'LIGHT_SNOW': '小雪',
-            'MODERATE_SNOW': '中雪',
-            'HEAVY_SNOW': '大雪',
-            'STORM_SNOW': '暴雪',
-            'DUST': '浮尘',
-            'SAND': '沙尘',
-            'WIND': '大风',
-            'LIGHT_HAZE': '轻度雾霾',
-            'MODERATE_HAZE': '中度雾霾',
-            'HEAVY_HAZE': '重度雾霾'
-        }
-    
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
         data = response.json()
-        if data['status'] == "ok":
-            weather_info_now = data['result']['realtime']
-            weather_info_day = data['result']['daily']
-            wind_level=get_wind_force_level(weather_info_now['wind']['speed'])
-            wind_direction=get_direction(weather_info_now['wind']['direction'])
-            text=f"- 天气：{weather_status[weather_info_now['skycon']]} 【{data['result']['forecast_keypoint']}】\n"
-            text=text+f"- 温度：{weather_info_now['temperature']}℃  【{weather_info_day['temperature'][0]['max']}℃/{weather_info_day['temperature'][0]['min']}℃】\n"
-            text=text+f"- 风力：{wind_level} / 风向：{wind_direction}\n"
-            text=text+f"- 湿度：{weather_info_now['humidity']*100:.2f}%  / 能见度：{weather_info_now['visibility']}\n"
-            text=text+f"- 空气：AQI：{weather_info_day['air_quality']['aqi'][0]['avg']['chn']} / PM2.5：{weather_info_day['air_quality']['pm25'][0]['avg']} \n"
-            text=text+f"- 生活：紫外线{weather_info_day['life_index']['ultraviolet'][0]['desc']} / 洗车{weather_info_day['life_index']['carWashing'][0]['desc']} \n"
-            return text
-    except Exception as e:
-        return f"无法获取天气信息:\n {e}"
-        
-def send_tg(telegram_bot_token,telegram_chat_id, message):
-    bot = telebot.TeleBot(telegram_bot_token)
+
+        if data["status"] != "ok":
+            return f"天气API返回异常状态: {data.get('status')}"
+
+        weather_info_now = data["result"]["realtime"]
+        weather_info_day = data["result"]["daily"]
+
+        skycon = weather_info_now["skycon"]
+        weather_label = WEATHER_STATUS.get(skycon, skycon)
+        wind_level = _get_wind_force_level(weather_info_now["wind"]["speed"])
+        wind_direction = _get_direction(weather_info_now["wind"]["direction"])
+
+        lines = [
+            f"- 天气：{weather_label} 【{data['result']['forecast_keypoint']}】",
+            f"- 温度：{weather_info_now['temperature']}℃  "
+            f"【{weather_info_day['temperature'][0]['max']}℃/"
+            f"{weather_info_day['temperature'][0]['min']}℃】",
+            f"- 风力：{wind_level} / 风向：{wind_direction}",
+            f"- 湿度：{weather_info_now['humidity']*100:.2f}%  "
+            f"/ 能见度：{weather_info_now['visibility']}",
+            f"- 空气：AQI：{weather_info_day['air_quality']['aqi'][0]['avg']['chn']} "
+            f"/ PM2.5：{weather_info_day['air_quality']['pm25'][0]['avg']}",
+            f"- 生活：紫外线{weather_info_day['life_index']['ultraviolet'][0]['desc']} "
+            f"/ 洗车{weather_info_day['life_index']['carWashing'][0]['desc']}",
+        ]
+        return "\n".join(lines) + "\n"
+    except requests.RequestException as e:
+        return f"无法获取天气信息: {e}"
+    except (KeyError, json.JSONDecodeError) as e:
+        return f"天气数据解析失败: {e}"
+
+
+def send_tg(telegram_bot_token: str, telegram_chat_id: str, message: str) -> None:
+    """发送到Telegram"""
+    bot = TeleBot(telegram_bot_token)
     bot.send_message(chat_id=telegram_chat_id, text=message)
     
     
