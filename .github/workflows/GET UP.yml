@@ -39,8 +39,8 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
           DD_SIGN: ${{ secrets.DD_SIGN }}
-          CAIYUN_KEY: ${{ secrets.CAIYUN_KEY }}
-          LOCATION: ${{ secrets.LOCATION }}
+          LATITUDE: ${{ secrets.LATITUDE }}
+          LONGITUDE: ${{ secrets.LONGITUDE }}
           CITY: ${{ secrets.CITY }}      
           G_T: ${{ secrets.G_T }}
           REPO_NAME: ${{ secrets.REPO_NAME }}

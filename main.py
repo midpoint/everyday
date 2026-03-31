@@ -14,11 +14,11 @@ from my_function import (
     World_60S,
 )
 
-CAIYUN_KEY: str | None = os.environ.get("CAIYUN_KEY")
 CITY: str | None = os.environ.get("CITY")
 DD_SIGN: str | None = os.environ.get("DD_SIGN")
 DINGTALK_WEBHOOK: str | None = os.environ.get("DINGTALK_WEBHOOK")
-LOCATION: str | None = os.environ.get("LOCATION")
+LATITUDE: str | None = os.environ.get("LATITUDE")
+LONGITUDE: str | None = os.environ.get("LONGITUDE")
 SENTENCE_API: str | None = os.environ.get("SENTENCE_API")
 SENTENCE_TOKEN: str | None = os.environ.get("SENTENCE_TOKEN")
 TELEGRAM_BOT_TOKEN: str | None = os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -30,7 +30,7 @@ ISSUE_NUMBER: str | None = os.environ.get("ISSUE_NUMBER")
 
 
 if __name__ == "__main__":
-    weather = get_weather(CAIYUN_KEY, LOCATION)
+    weather = get_weather(LATITUDE, LONGITUDE)
 
     text = f"# 每日早报\n---\n- {get_day()}\n---\n## 今日天气\n"
     text += str(weather)

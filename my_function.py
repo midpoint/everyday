@@ -190,43 +190,76 @@ def send_dd(dingtalk_webhook: str, dd_sign: str, message: str) -> None:
     dingtalk_bot.send_markdown(title="每日早报", text=message)
 
 
-def get_weather(caiyun_key: str, location: str) -> str:
-    """获取天气信息"""
-    url = f"https://api.caiyunapp.com/v2.6/{caiyun_key}/{location}/weather"
+def get_weather(latitude: str, longitude: str) -> str:
+    """获取天气信息（使用 Open-Meteo API，无需 API key）"""
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "latitude": latitude,
+        "longitude": longitude,
+        "current": ["temperature_2m", "relative_humidity_2m", "weather_code",
+                    "wind_speed_10m", "wind_direction_10m"],
+        "daily": ["temperature_2m_max", "temperature_2m_min", "uv_index_max"],
+        "timezone": "Asia/Shanghai",
+    }
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
-        data = response.json()
+        data = response.json()["current"]
+        daily = response.json()["daily"]
 
-        if data["status"] != "ok":
-            return f"天气API返回异常状态: {data.get('status')}"
-
-        weather_info_now = data["result"]["realtime"]
-        weather_info_day = data["result"]["daily"]
-
-        skycon = weather_info_now["skycon"]
-        weather_label = WEATHER_STATUS.get(skycon, skycon)
-        wind_level = _get_wind_force_level(weather_info_now["wind"]["speed"])
-        wind_direction = _get_direction(weather_info_now["wind"]["direction"])
+        weather_code = data.get("weather_code", -1)
+        weather_label = _weather_code_to_text(weather_code)
+        wind_level = _get_wind_force_level(data.get("wind_speed_10m", 0))
+        wind_direction = _get_direction(data.get("wind_direction_10m", 0))
 
         lines = [
-            f"- 天气：{weather_label} 【{data['result']['forecast_keypoint']}】",
-            f"- 温度：{weather_info_now['temperature']}℃  "
-            f"【{weather_info_day['temperature'][0]['max']}℃/"
-            f"{weather_info_day['temperature'][0]['min']}℃】",
+            f"- 天气：{weather_label}",
+            f"- 温度：{data.get('temperature_2m', 'N/A')}℃  "
+            f"【{daily['temperature_2m_max'][0]}℃/{daily['temperature_2m_min'][0]}℃】",
             f"- 风力：{wind_level} / 风向：{wind_direction}",
-            f"- 湿度：{weather_info_now['humidity']*100:.2f}%  "
-            f"/ 能见度：{weather_info_now['visibility']}",
-            f"- 空气：AQI：{weather_info_day['air_quality']['aqi'][0]['avg']['chn']} "
-            f"/ PM2.5：{weather_info_day['air_quality']['pm25'][0]['avg']}",
-            f"- 生活：紫外线{weather_info_day['life_index']['ultraviolet'][0]['desc']} "
-            f"/ 洗车{weather_info_day['life_index']['carWashing'][0]['desc']}",
+            f"- 湿度：{data.get('relative_humidity_2m', 'N/A')}%",
+            f"- 紫外线：{daily.get('uv_index_max', ['N/A'])[0]}",
         ]
         return "\n".join(lines) + "\n"
     except requests.RequestException as e:
         return f"无法获取天气信息: {e}"
     except (KeyError, json.JSONDecodeError) as e:
         return f"天气数据解析失败: {e}"
+
+
+def _weather_code_to_text(code: int) -> str:
+    """将 WMO 天气代码转换为中文描述"""
+    mapping = {
+        0: "晴天",
+        1: "晴间多云",
+        2: "多云",
+        3: "阴天",
+        45: "雾",
+        48: "雾凇",
+        51: "小毛毛雨",
+        53: "中毛毛雨",
+        55: "大毛毛雨",
+        56: "冻毛毛雨",
+        57: "强冻毛毛雨",
+        61: "小雨",
+        63: "中雨",
+        65: "大雨",
+        66: "冻雨",
+        67: "强冻雨",
+        71: "小雪",
+        73: "中雪",
+        75: "大雪",
+        77: "雪粒",
+        80: "小阵雨",
+        81: "中阵雨",
+        82: "大阵雨",
+        85: "小阵雪",
+        86: "大阵雪",
+        95: "雷暴",
+        96: "雷暴+小冰雹",
+        99: "雷暴+大冰雹",
+    }
+    return mapping.get(code, f"未知({code})")
 
 
 def send_tg(telegram_bot_token: str, telegram_chat_id: str, message: str) -> None:
