@@ -267,9 +267,49 @@ def _weather_code_to_text(code: int) -> str:
     return mapping.get(code, f"未知({code})")
 
 
+def _markdown_to_html(text: str) -> str:
+    """将 Markdown 转换为 Telegram HTML 格式"""
+    import re
+
+    # 处理分隔线 --- → ──
+    text = re.sub(r'^---+$', '──', text, flags=re.MULTILINE)
+
+    # 处理标题 # 标题 → <b>标题</b>
+    text = re.sub(r'^### (.+)$', r'<b>\1</b>', text, flags=re.MULTILINE)
+    text = re.sub(r'^## (.+)$', r'<b>\1</b>', text, flags=re.MULTILINE)
+    text = re.sub(r'^# (.+)$', r'<b>\1</b>', text, flags=re.MULTILINE)
+
+    # 处理列表项 - item → • item
+    text = re.sub(r'^-+ (.+)$', r'• \1', text, flags=re.MULTILINE)
+
+    # 处理图片 ![描述](url) → <a href="url">📷 描述</a>
+    text = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', r'<a href="\2">📷 \1</a>', text)
+
+    # 处理链接 [描述](url) → <a href="url">描述</a>
+    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', text)
+
+    # 处理行内代码 `code` → <code>code</code>
+    text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
+
+    # 转义 HTML 特殊字符（仅在非标签内）
+    # 简单转义：只转义 & < > (不在已有标签内)
+    lines = text.split('\n')
+    result = []
+    for line in lines:
+        # 跳过已经是 HTML 标签的行
+        if re.match(r'^\s*<(|/|\s)', line):
+            result.append(line)
+        else:
+            # 转义 & < >
+            line = line.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            result.append(line)
+    return '\n'.join(result)
+
+
 def send_tg(telegram_bot_token: str, telegram_chat_id: str, message: str) -> None:
     """发送到Telegram"""
     bot = TeleBot(telegram_bot_token)
-    bot.send_message(chat_id=telegram_chat_id, text=message)
+    html_message = _markdown_to_html(message)
+    bot.send_message(chat_id=telegram_chat_id, text=html_message, parse_mode='HTML')
     
     
