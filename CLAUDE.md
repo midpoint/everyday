@@ -8,10 +8,11 @@ This is a **每日早报 (Daily Morning Report)** automation project. It generat
 
 ## Project Structure
 
-- `main.py` — Entry point that orchestrates report generation and distribution
-- `my_function.py` — All utility functions (weather, news, poetry, messaging, GitHub integration)
+- `main.py` — Entry point; orchestrates the pipeline in `get_weather → get_day → get_one_sentence → make_pic → World_60S → get_inspirational_quote → create_comment → send_dd/send_tg`
+- `my_function.py` — All utility functions. Key lookup tables at module level: `WIND_FORCE_TABLE`, `DIRECTION_TABLE`, `WEATHER_STATUS` (WMO weather code mapping), `DEFAULT_SENTENCE` (fallback poetry)
 - `requirements.txt` — Python dependencies
-- `m25.sh` — Environment setup script (sets Anthropic API credentials and launches Claude Code)
+- `.github/workflows/GET UP.yml` — Runs daily at 22:00 Asia/Shanghai; also triggerable manually
+- `m25.sh` — Local dev setup script (not used in CI)
 
 ## Running the Project
 
@@ -20,8 +21,8 @@ This is a **每日早报 (Daily Morning Report)** automation project. It generat
 ```bash
 pip install -r requirements.txt
 # Set required environment variables (see README.md for full list)
-# Required: CAIYUN_KEY, CITY, LOCATION, DD_SIGN, DINGTALK_WEBHOOK, SENTENCE_API,
-#           SENTENCE_TOKEN, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, ZHOYAN_API_KEY,
+# Required: CITY, LATITUDE, LONGITUDE, DD_SIGN, DINGTALK_WEBHOOK, SENTENCE_API,
+#           SENTENCE_TOKEN, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID,
 #           G_T, REPO_NAME, ISSUE_NUMBER
 python main.py
 ```
@@ -33,12 +34,13 @@ The `GET UP` workflow runs daily at 22:00 (Asia/Shanghai) via cron. All secrets 
 ## Architecture
 
 `main.py` imports all functions from `my_function.py` and orchestrates the pipeline:
-1. Fetch weather from Caiyun API
-2. Fetch classical Chinese poetry from Jinrishici API
-3. Generate image for poetry using Zhipu AI (cogview-4 model)
-4. Fetch news from viki.moe 60s API
-5. Fetch inspirational quote from iciba.com
-6. Post to GitHub Issue
-7. Send to DingTalk and Telegram
+1. Fetch weather from Open-Meteo API (free, no API key)
+2. Fetch date info with lunar calendar via `cnlunar`
+3. Fetch classical Chinese poetry from Jinrishici API
+4. Generate image for poetry using Pollinations.ai (free, Stable Diffusion, no API key)
+5. Fetch news from viki.moe 60s API
+6. Fetch inspirational quote from iciba.com
+7. Post to GitHub Issue
+8. Send to DingTalk and Telegram
 
-Environment variables are loaded from `os.environ.get()` in `main.py`, making the project configurable without code changes.
+Environment variables are loaded from `os.environ.get()` at module level in `main.py` and passed as arguments to each function.

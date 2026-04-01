@@ -23,7 +23,6 @@ SENTENCE_API: str | None = os.environ.get("SENTENCE_API")
 SENTENCE_TOKEN: str | None = os.environ.get("SENTENCE_TOKEN")
 TELEGRAM_BOT_TOKEN: str | None = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID: str | None = os.environ.get("TELEGRAM_CHAT_ID")
-ZHOYAN_API_KEY: str | None = os.environ.get("ZHOYAN_API_KEY")
 G_T: str | None = os.environ.get("G_T")
 REPO_NAME: str | None = os.environ.get("REPO_NAME")
 ISSUE_NUMBER: str | None = os.environ.get("ISSUE_NUMBER")
@@ -36,7 +35,7 @@ if __name__ == "__main__":
     text += str(weather)
 
     sentence1 = get_one_sentence(SENTENCE_API, SENTENCE_TOKEN)
-    picurl = make_pic(ZHOYAN_API_KEY, sentence1)
+    picurl = make_pic(sentence1)
     text += f"\n---\n## 一诗一图\n- {sentence1}\n"
 
     text += f"\n---\n## 热点新闻 \n{World_60S()}"

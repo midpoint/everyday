@@ -169,18 +169,23 @@ def get_one_sentence(
         return DEFAULT_SENTENCE
 
 
-def make_pic(zhoyan_api_key: str, sentence: str) -> str:
-    """根据古诗词生成图片，返回图片URL或错误信息"""
-    from zhipuai import ZhipuAI
+def make_pic(sentence: str) -> str:
+    """根据古诗词生成图片，返回图片URL或错误信息（使用 Pollinations.ai，免费无需 API key）"""
+    import urllib.parse
 
-    client = ZhipuAI(api_key=zhoyan_api_key)
+    # Pollinations.ai 使用 Stable Diffusion，prompt 支持多语言
+    encoded_prompt = urllib.parse.quote(sentence)
+    image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}"
+
+    # 验证图片是否可访问（不下载，只检查返回）
     try:
-        response = client.images.generations(
-            model="cogview-4",
-            prompt=sentence,
-        )
-        return response.data[0].url
-    except Exception as e:
+        response = requests.get(image_url, timeout=30, allow_redirects=True)
+        if response.status_code == 200 and len(response.content) > 1000:
+            # 返回可访问的图片 URL
+            return image_url
+        else:
+            return f"无法生成图片: HTTP {response.status_code}"
+    except requests.RequestException as e:
         return f"无法生成图片: {e}"
 
 
