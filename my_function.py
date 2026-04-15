@@ -153,40 +153,38 @@ def get_day() -> str:
     return "\n".join(lines) + "\n"
 
 
-def get_one_sentence(
-    sentence_api: str,
-    sentence_token: Optional[str] = None,
-) -> str:
-    """获取一句古诗词"""
-    headers = {}
-    if sentence_token:
-        headers["X-User-Token"] = sentence_token
+def get_daily_motto() -> str:
+    """获取每日格言（使用 iciba.com API）"""
+    url = "https://open.iciba.com/dsapi/"
     try:
-        r = requests.get(sentence_api, headers=headers, timeout=10)
-        r.raise_for_status()
-        return r.json()["data"]["content"]
-    except (requests.RequestException, KeyError, json.JSONDecodeError) as e:
-        return DEFAULT_SENTENCE
-
-
-def make_pic(sentence: str) -> str:
-    """根据古诗词生成图片，返回图片URL或错误信息（使用 Pollinations.ai，免费无需 API key）"""
-    import urllib.parse
-
-    # Pollinations.ai 使用 Stable Diffusion，prompt 支持多语言
-    encoded_prompt = urllib.parse.quote(sentence)
-    image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}"
-
-    # 验证图片是否可访问（不下载，只检查返回）
-    try:
-        response = requests.get(image_url, timeout=30, allow_redirects=True)
-        if response.status_code == 200 and len(response.content) > 1000:
-            # 返回可访问的图片 URL
-            return image_url
-        else:
-            return f"无法生成图片: HTTP {response.status_code}"
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        return f"{data.get('content')}\n{data.get('note')}"
     except requests.RequestException as e:
-        return f"无法生成图片: {e}"
+        return f"无法获取每日格言: {e}"
+
+
+def get_bing_wallpaper() -> str:
+    """获取必应每日壁纸 URL"""
+    url = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        images = data.get("images", [])
+        if not images:
+            return "无法获取必应壁纸: 无图片数据"
+        # 必应壁纸有多种分辨率，取 1920x1080 的版本
+        image_info = images[0]
+        base_url = "https://cn.bing.com"
+        # 优先取高分辨率，否则取默认 url
+        wallpaper_url = image_info.get("urlbase", "")
+        if wallpaper_url:
+            return f"{base_url}{wallpaper_url}_1920x1080.jpg"
+        return f"{base_url}{image_info.get('url', '')}"
+    except (requests.RequestException, KeyError, json.JSONDecodeError) as e:
+        return f"无法获取必应壁纸: {e}"
 
 
 def send_dd(dingtalk_webhook: str, dd_sign: str, message: str) -> None:
