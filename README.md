@@ -1,7 +1,7 @@
 # 每日早报
 ## 运行例图
 
-![每日早报](https://i.imgur.com/lcUpkEC.jpeg)
+<img width="761" height="4575" alt="image" src="https://github.com/user-attachments/assets/1a496516-78e6-40c7-bb70-35ce83c22ac8" />
 
 
 ## 功能说明
