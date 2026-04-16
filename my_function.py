@@ -154,13 +154,17 @@ def get_day() -> str:
 
 
 def get_daily_motto() -> str:
-    """获取每日格言（使用 iciba.com API）"""
-    url = "https://open.iciba.com/dsapi/"
+    """获取每日格言（使用 hitokoto 一言 API）"""
+    url = "https://v1.hitokoto.cn/"
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
-        return f"{data.get('content')}\n{data.get('note')}"
+        content = data.get("hitokoto", "")
+        author = data.get("creator", "")
+        if author:
+            return f"{content}\n—— {author}"
+        return content
     except requests.RequestException as e:
         return f"无法获取每日格言: {e}"
 
