@@ -153,22 +153,6 @@ def get_day() -> str:
     return "\n".join(lines) + "\n"
 
 
-def get_daily_motto() -> str:
-    """获取每日格言（使用 hitokoto 一言 API）"""
-    url = "https://v1.hitokoto.cn/"
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-        content = data.get("hitokoto", "")
-        author = data.get("creator", "")
-        if author:
-            return f"{content}\n—— {author}"
-        return content
-    except requests.RequestException as e:
-        return f"无法获取每日格言: {e}"
-
-
 def get_bing_wallpaper() -> tuple[str, str]:
     """获取必应每日壁纸，返回 (图片URL, 标题)"""
     url = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN"

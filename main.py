@@ -5,7 +5,6 @@ import os
 from my_function import (
     create_comment,
     get_bing_wallpaper,
-    get_daily_motto,
     get_day,
     get_inspirational_quote,
     get_weather,
@@ -32,9 +31,7 @@ if __name__ == "__main__":
     text = f"# 每日早报\n---\n- {get_day()}\n---\n## 今日天气\n"
     text += str(weather)
 
-    motto = get_daily_motto()
     wallpaper, wallpaper_title = get_bing_wallpaper()
-    text += f"\n---\n## 每日格言\n{motto}\n"
     text += f"\n---\n## 每日美图\n![必应壁纸]({wallpaper})"
     if wallpaper_title:
         text += f"\n{wallpaper_title}"
