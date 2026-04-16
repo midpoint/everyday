@@ -165,8 +165,8 @@ def get_daily_motto() -> str:
         return f"无法获取每日格言: {e}"
 
 
-def get_bing_wallpaper() -> str:
-    """获取必应每日壁纸 URL"""
+def get_bing_wallpaper() -> tuple[str, str]:
+    """获取必应每日壁纸，返回 (图片URL, 标题)"""
     url = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1"
     try:
         response = requests.get(url, timeout=10)
@@ -174,17 +174,18 @@ def get_bing_wallpaper() -> str:
         data = response.json()
         images = data.get("images", [])
         if not images:
-            return "无法获取必应壁纸: 无图片数据"
-        # 必应壁纸有多种分辨率，取 1920x1080 的版本
+            return "无法获取必应壁纸: 无图片数据", ""
         image_info = images[0]
         base_url = "https://cn.bing.com"
-        # 优先取高分辨率，否则取默认 url
         wallpaper_url = image_info.get("urlbase", "")
         if wallpaper_url:
-            return f"{base_url}{wallpaper_url}_1920x1080.jpg"
-        return f"{base_url}{image_info.get('url', '')}"
+            img_url = f"{base_url}{wallpaper_url}_1920x1080.jpg"
+        else:
+            img_url = f"{base_url}{image_info.get('url', '')}"
+        title = image_info.get("title", "") or image_info.get("copyright", "")
+        return img_url, title
     except (requests.RequestException, KeyError, json.JSONDecodeError) as e:
-        return f"无法获取必应壁纸: {e}"
+        return f"无法获取必应壁纸: {e}", ""
 
 
 def send_dd(dingtalk_webhook: str, dd_sign: str, message: str) -> None:

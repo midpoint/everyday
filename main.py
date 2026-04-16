@@ -33,9 +33,12 @@ if __name__ == "__main__":
     text += str(weather)
 
     motto = get_daily_motto()
-    wallpaper = get_bing_wallpaper()
+    wallpaper, wallpaper_title = get_bing_wallpaper()
     text += f"\n---\n## 每日格言\n{motto}\n"
-    text += f"\n---\n## 必应壁纸\n![必应壁纸]({wallpaper})\n"
+    text += f"\n---\n## 每日美图\n![必应壁纸]({wallpaper})"
+    if wallpaper_title:
+        text += f"\n{wallpaper_title}"
+    text += "\n"
 
     text += f"\n---\n## 热点新闻 \n{World_60S()}"
     text += f"\n---\n## 励志语 \n{get_inspirational_quote()}"
