@@ -171,7 +171,7 @@ def get_daily_motto() -> str:
 
 def get_bing_wallpaper() -> tuple[str, str]:
     """获取必应每日壁纸，返回 (图片URL, 标题)"""
-    url = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1"
+    url = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN"
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
