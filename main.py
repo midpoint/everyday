@@ -31,10 +31,12 @@ if __name__ == "__main__":
     text = f"# 每日早报\n---\n- {get_day()}\n---\n## 今日天气\n"
     text += str(weather)
 
-    wallpaper, wallpaper_title = get_bing_wallpaper()
+    wallpaper, wallpaper_title, wallpaper_copyright = get_bing_wallpaper()
     text += f"\n---\n## 每日美图\n![必应壁纸]({wallpaper})"
     if wallpaper_title:
         text += f"\n{wallpaper_title}"
+    if wallpaper_copyright:
+        text += f"\n{wallpaper_copyright}"
     text += "\n"
 
     text += f"\n---\n## 热点新闻 \n{World_60S()}"

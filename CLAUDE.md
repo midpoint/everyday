@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **每日早报 (Daily Morning Report)** automation project. It generates a daily report containing weather, news, classical Chinese poetry with AI-generated images, and inspirational quotes, then sends it to DingTalk and Telegram, and saves it to a GitHub Issue.
+This is a **每日早报 (Daily Morning Report)** automation project. It generates a daily report containing weather, news, Bing wallpaper, and inspirational quotes, then sends it to DingTalk and Telegram, and saves it to a GitHub Issue.
 
 ## Project Structure
 
@@ -36,11 +36,18 @@ The `GET UP` workflow runs daily at 22:00 (Asia/Shanghai) via cron. All secrets 
 `main.py` imports all functions from `my_function.py` and orchestrates the pipeline:
 1. Fetch weather from Open-Meteo API (free, no API key)
 2. Fetch date info with lunar calendar via `cnlunar`
-3. Fetch daily motto from iciba.com
-4. Fetch Bing daily wallpaper
+3. Fetch daily inspirational quote from iciba.com
+4. Fetch Bing daily wallpaper (mkt=zh-CN for Chinese market)
 5. Fetch news from viki.moe 60s API
-6. Fetch inspirational quote from iciba.com
-7. Post to GitHub Issue
-8. Send to DingTalk and Telegram
+6. Post to GitHub Issue (create_comment)
+7. Send to DingTalk (send_dd) and Telegram (send_tg)
 
 Environment variables are loaded from `os.environ.get()` at module level in `main.py` and passed as arguments to each function.
+
+## Key Implementation Details
+
+- Weather code mapping: `_weather_code_to_text()` maps WMO weather codes (0-99) to Chinese descriptions
+- Wind force levels: `_get_wind_force_level()` maps wind speed (m/s) to Beaufort-scale labels
+- Wind direction: `_get_direction()` maps degrees to cardinal directions (N, NE, E, SE, S, SW, W, NW)
+- Markdown to Telegram HTML: `_markdown_to_html()` handles conversion for Telegram's HTML parse mode
+- `get_bing_wallpaper()` forces Chinese market via `mkt=zh-CN` query parameter

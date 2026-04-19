@@ -153,8 +153,8 @@ def get_day() -> str:
     return "\n".join(lines) + "\n"
 
 
-def get_bing_wallpaper() -> tuple[str, str]:
-    """获取必应每日壁纸，返回 (图片URL, 标题)"""
+def get_bing_wallpaper() -> tuple[str, str, str]:
+    """获取必应每日壁纸，返回 (图片URL, 标题, 版权)"""
     url = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN"
     try:
         response = requests.get(url, timeout=10)
@@ -162,7 +162,7 @@ def get_bing_wallpaper() -> tuple[str, str]:
         data = response.json()
         images = data.get("images", [])
         if not images:
-            return "无法获取必应壁纸: 无图片数据", ""
+            return "无法获取必应壁纸: 无图片数据", "", ""
         image_info = images[0]
         base_url = "https://cn.bing.com"
         wallpaper_url = image_info.get("urlbase", "")
@@ -170,10 +170,11 @@ def get_bing_wallpaper() -> tuple[str, str]:
             img_url = f"{base_url}{wallpaper_url}_1920x1080.jpg"
         else:
             img_url = f"{base_url}{image_info.get('url', '')}"
-        title = image_info.get("title", "") or image_info.get("copyright", "")
-        return img_url, title
+        title = image_info.get("title", "")
+        copyright = image_info.get("copyright", "")
+        return img_url, title, copyright
     except (requests.RequestException, KeyError, json.JSONDecodeError) as e:
-        return f"无法获取必应壁纸: {e}", ""
+        return f"无法获取必应壁纸: {e}", "", ""
 
 
 def send_dd(dingtalk_webhook: str, dd_sign: str, message: str) -> None:
