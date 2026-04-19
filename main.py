@@ -36,7 +36,7 @@ if __name__ == "__main__":
     if wallpaper_title:
         text += f"\n{wallpaper_title}"
     if wallpaper_copyright:
-        text += f"\n{wallpaper_copyright}"
+        text += f"\n\n{wallpaper_copyright}"
     text += "\n"
 
     text += f"\n---\n## 热点新闻 \n{World_60S()}"
