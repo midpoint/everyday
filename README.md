@@ -31,3 +31,6 @@ TELEGRAM_CHAT_ID|tg对话ID|*
 G_T|Github Token|*
 REPO_NAME|项目名|midpoint/everyday
 ISSUE_NUMBER|问题编号|1
+
+
+<!-- Issue #1 addressed -->
