@@ -10,8 +10,8 @@ on:
     #     message:
     #       description: "weather message"
     #       required: false
-  schedule:
-    - cron: '00 20 * * *'
+  # schedule:
+  #   - cron: '00 20 * * *'
 
 jobs:
   sync:
