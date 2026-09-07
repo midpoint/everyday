@@ -111,7 +111,7 @@ def get_inspirational_quote() -> str:
 
 def World_60S() -> str:
     """获取60秒新闻简报"""
-    url = "https://60s-api.viki.moe/v2/60s"
+    url = "https://60s.midpoint2005.workers.dev/v2/60s"
     try:
         r = requests.get(url, timeout=10)
         r.raise_for_status()
